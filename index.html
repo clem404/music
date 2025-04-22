@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music App</title>
+    <style>
+      /* RESET & BASE STYLES */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      header {
+        padding: 20px;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      header h1 {
+        font-size: 40px;
+        color: #fff;
+        text-shadow: 2px 2px #00000066;
+        animation: fadeIn 1.5s ease-in-out;
+      }
+      h1,
+      h2 {
+        text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #00c6ff !important;
+      }
+      @keyframes neon {
+        0% {
+          text-shadow: 0 0 5px #0ff;
+        }
+        50% {
+          text-shadow: 0 0 20px #0ff;
+        }
+        100% {
+          text-shadow: 0 0 5px #0ff;
+        }
+      }
+
+      h1 {
+        animation: neon 2s infinite;
+      }
+
+      header p {
+        font-size: 18px;
+        opacity: 0.8;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+      }
+
+      section {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 30px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        margin-bottom: 30px;
+        animation: floatUp 1.5s ease;
+      }
+
+      h2 {
+        font-size: 28px;
+        margin-bottom: 20px;
+
+        text-align: center;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        margin: 10px 0;
+      }
+
+      button.song-btn {
+        background: linear-gradient(to right, #4facfe, #00f2fe);
+        border: none;
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: 30px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+        width: 100%;
+      }
+
+      button.song-btn:hover {
+        box-shadow: 0 0 10px #00f2fe, 0 0 20px #4facfe;
+      }
+
+      .player {
+        text-align: center;
+      }
+
+      #currentSong {
+        font-size: 20px;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .controls {
+        margin-top: 15px;
+      }
+
+      .controls button {
+        margin: 5px;
+        padding: 10px 16px;
+        border-radius: 50px;
+        border: none;
+        background: #00c6ff;
+        background: linear-gradient(to right, #0072ff, #00c6ff);
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .controls button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px #00c6ff;
+      }
+      .song-btn:active {
+        animation: pulse 0.3s;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(0.95);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .seek-bar,
+      .volume-bar {
+        width: 100%;
+        margin: 0;
+      }
+
+      input[type="range"] {
+        width: 50%;
+        cursor: pointer;
+        accent-color: #00c6ff;
+      }
+
+      .time {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        opacity: 0.8;
+      }
+
+      footer {
+        text-align: center;
+        padding: 20px;
+        font-size: 14px;
+        opacity: 0.8;
+      }
+
+      a {
+        color: #00c6ff;
+        text-decoration: none;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes floatUp {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      #visualizer {
+        width: 100%;
+        height: 100px;
+        margin-top: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          circle at 30% 30%,
+          #00c6ff44,
+          transparent 60%
+        );
+        animation: moveBg 15s infinite linear;
+        z-index: -1;
+      }
+      @keyframes moveBg {
+        0% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(50px, 50px);
+        }
+        100% {
+          transform: translate(0, 0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Music App</h1>
+      <p>Here to give you the best experience</p>
+    </header>
+
+    <main>
+      <section>
+        <h2>Top 10 Songs</h2>
+        <ul>
+          <li>
+            <button
+              class="song-btn"
+              onclick="playSong('songs/Stromae.mp3', 'Stromae')"
+            >
+              Stromae
+            </button>
+          </li>
+          <li>
+            <button
+              class="song-btn"
+              onclick="playSong('songs/Dandelions.mp3', 'Dandelions')"
+            >
+              Dandelions
+            </button>
+          </li>
+          <li>
+            <button
+              class="song-btn"
+              onclick="playSong('songs/nothings-new.mp3', 'Nothing’s New')"
+            >
+              Nothing’s New
+            </button>
+          </li>
+          <!-- Add more songs -->
+        </ul>
+      </section>
+
+      <section class="player">
+        <h2>Now Playing:</h2>
+
+        <p id="currentSong">Nothing playing yet</p>
+        <audio id="audioPlayer"></audio>
+
+        <div class="controls">
+          <button onclick="prevSong()">⏮️</button>
+          <button onclick="togglePlayPause()">⏯️</button>
+          <button onclick="nextSong()">⏭️</button>
+        </div>
+
+        <input type="range" id="seekBar" class="seek-bar" value="0" />
+        <div class="time">
+          <span id="currentTime">0:00</span>
+          <span id="duration">0:00</span>
+        </div>
+
+        <input
+          type="range"
+          id="volumeBar"
+          class="volume-bar"
+          min="0"
+          max="1"
+          step="0.01"
+          value="1"
+        />
+        <div
+          id="lyricsPanel"
+          style="margin-top: 20px; white-space: pre-wrap"
+        ></div>
+
+        <canvas id="visualizer" width="600" height="100"></canvas>
+      </section>
+    </main>
+
+    <footer>
+      <p>Built with ❤ by <a href="https://t.me/Clem_404">Clem</a></p>
+    </footer>
+
+    <script>
+      const songs = [
+        { name: "Stromae", src: "songs/Stromae.mp3" },
+        { name: "Dandelions", src: "songs/Dandelions.mp3" },
+        { name: "Nothing’s New", src: "songs/nothings-new.mp3" },
+      ];
+
+      let currentIndex = 0;
+      const audio = document.getElementById("audioPlayer");
+      const currentSong = document.getElementById("currentSong");
+      const seekBar = document.getElementById("seekBar");
+      const volumeBar = document.getElementById("volumeBar");
+      const currentTimeText = document.getElementById("currentTime");
+      const durationText = document.getElementById("duration");
+
+      function loadSong(index) {
+        audio.src = songs[index].src;
+        currentSong.textContent = songs[index].name;
+        audio.play();
+      }
+
+      function togglePlayPause() {
+        if (audio.src === "") {
+          loadSong(currentIndex);
+        } else if (audio.paused) {
+          audio.play();
+        } else {
+          audio.pause();
+        }
+      }
+
+      function nextSong() {
+        currentIndex = (currentIndex + 1) % songs.length;
+        loadSong(currentIndex);
+      }
+
+      function prevSong() {
+        currentIndex = (currentIndex - 1 + songs.length) % songs.length;
+        loadSong(currentIndex);
+      }
+
+      audio.addEventListener("loadedmetadata", () => {
+        seekBar.max = audio.duration;
+        durationText.textContent = formatTime(audio.duration);
+      });
+
+      audio.addEventListener("timeupdate", () => {
+        seekBar.value = audio.currentTime;
+        currentTimeText.textContent = formatTime(audio.currentTime);
+      });
+
+      seekBar.addEventListener("input", () => {
+        audio.currentTime = seekBar.value;
+      });
+
+      volumeBar.addEventListener("input", () => {
+        audio.volume = volumeBar.value;
+      });
+
+      audio.addEventListener("ended", nextSong);
+
+      function formatTime(seconds) {
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return `${min}:${sec < 10 ? "0" + sec : sec}`;
+      }
+      function playSong(src, name) {
+        audio.src = src;
+        audio.play();
+        currentSong.textContent = name;
+        // update currentIndex to match the song selected
+        currentIndex = songs.findIndex((song) => song.src === src);
+      }
+      const canvas = document.getElementById("visualizer");
+      const ctx = canvas.getContext("2d");
+
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+      const analyser = audioContext.createAnalyser();
+      const source = audioContext.createMediaElementSource(audio);
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
+
+      analyser.fftSize = 8192;
+      const bufferLength = analyser.fftSize;
+      const dataArray = new Uint8Array(bufferLength);
+
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+
+      function drawWaveform() {
+        requestAnimationFrame(drawWaveform);
+        analyser.getByteTimeDomainData(dataArray);
+
+        // Smooth the data
+        const smoothedData = smoothData(dataArray);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Smooth the line appearance
+        ctx.lineWidth = 2;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, "#00f2fe");
+        gradient.addColorStop(1, "#4facfe");
+
+        ctx.strokeStyle = gradient;
+        ctx.shadowColor = "#00f2fe";
+        ctx.shadowBlur = 12;
+
+        ctx.beginPath();
+
+        const sliceWidth = (canvas.width * 1.0) / smoothedData.length;
+        let x = 0;
+
+        for (let i = 0; i < smoothedData.length; i++) {
+          const v = smoothedData[i] / 128.0;
+          const y = (v * canvas.height) / 2;
+
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+
+          x += sliceWidth;
+        }
+
+        ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.stroke();
+      }
+
+      // Ensure audio context resumes on interaction
+      document.addEventListener("click", () => {
+        if (audioContext.state === "suspended") {
+          audioContext.resume();
+        }
+      });
+      function smoothData(data, smoothFactor = 5) {
+        let smoothedData = [];
+        for (let i = 0; i < data.length; i++) {
+          let sum = 0;
+          let count = 0;
+          for (let j = i - smoothFactor; j <= i + smoothFactor; j++) {
+            if (j >= 0 && j < data.length) {
+              sum += data[j];
+              count++;
+            }
+          }
+          smoothedData.push(sum / count);
+        }
+        return smoothedData;
+      }
+
+      function drawWaveform() {
+        requestAnimationFrame(drawWaveform);
+        analyser.getByteTimeDomainData(dataArray);
+
+        // Smooth the data
+        const smoothedData = smoothData(dataArray);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Smooth the line appearance
+        ctx.lineWidth = 2;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, "#00f2fe");
+        gradient.addColorStop(1, "#4facfe");
+
+        ctx.strokeStyle = gradient;
+        ctx.shadowColor = "#00f2fe";
+        ctx.shadowBlur = 12;
+
+        ctx.beginPath();
+
+        const sliceWidth = (canvas.width * 1.0) / smoothedData.length;
+        let x = 0;
+
+        for (let i = 0; i < smoothedData.length; i++) {
+          const v = smoothedData[i] / 128.0;
+          const y = (v * canvas.height) / 2;
+
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+
+          x += sliceWidth;
+        }
+
+        ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.stroke();
+      }
+
+      drawWaveform();
+    </script>
+  </body>
+</html>
